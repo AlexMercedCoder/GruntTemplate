@@ -1,6 +1,12 @@
 module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
+    concat: {
+      js: {
+        src: ["src/*.js"],
+        dest: "dist/index.js",
+      },
+    },
     babel: {
       options: {
         sourceMap: false,
@@ -8,7 +14,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          "dist/index.js": "src/index.js",
+          "dist/index.js": "dist/index.js",
         },
       },
     },
@@ -23,6 +29,29 @@ module.exports = function (grunt) {
         },
       },
     },
+    express: {
+      options: {
+        // Override defaults here
+      },
+      dev: {
+        options: {
+          script: "server.js",
+        },
+      },
+    },
+    watch: {
+      js: {
+        files: ["src/*.js"],
+        tasks: ["concat", "babel", "uglify"],
+      },
+      express: {
+        files: ["src/*.js"],
+        tasks: ["express:dev"],
+        options: {
+          spawn: false,
+        },
+      },
+    },
   });
 
   grunt.loadNpmTasks("grunt-babel");
@@ -31,6 +60,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-express-server");
 
-  grunt.registerTask("default", ["babel", "uglify"]);
-  grunt.registerTask("watch", ["watch"]);
+  grunt.registerTask("default", ["concat", "babel", "uglify"]);
 };
